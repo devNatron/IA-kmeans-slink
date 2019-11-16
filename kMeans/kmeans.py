@@ -16,7 +16,7 @@ def lerArquivo(nomeArquivo):
 def inicializarClusters(dados):
     cluster_list = []
     valores = []
-    
+
     for i in range(0, nClusters):       # inicializa uma lista de dicionarios
         flag = 1
 
@@ -31,15 +31,32 @@ def inicializarClusters(dados):
         valores.append(sort)
 
         cluster_list.append({ 
-            "centroide": [dados[sort][1], dados[sort][2]],
+            "centroide": [ float(dados[sort][1]), float(dados[sort][2]) ],
             "objs": []
         })
     
     return cluster_list
 
-def agrupar(centroides, dados):
+def euclides(centroide, obj):
+    distancia = 0
+    for i in range(0, 2):
+        distancia += pow( ( centroide["centroide"][i]) - float(obj[i+1]), 2)
+
+    return distancia
+
+def agruparObjetos(cluster_list, dados):
+    teste = 1
     for obj in dados:
-        (centroides[0], obj)
+        menor_distancia = [0, 100000]
+        if(teste):
+            teste = 0
+            continue
+        for i in range(0, 3):
+            distancia = euclides(cluster_list[i], obj)
+            if(distancia < menor_distancia[1]):
+                menor_distancia[1] = distancia
+                menor_distancia[0] = i
+        cluster_list[ menor_distancia[0] ]["objs"].append(obj)
 
 
 if __name__ == "__main__":
@@ -47,11 +64,13 @@ if __name__ == "__main__":
     nClusters = int(input("Quantidade de clusters: "))
     #nInteracoes = input("quantidade de interacoes: ")
 
+    #leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
-    # print(dados)
 
+    #inicia clusters sorteando 3 obj aleatórios
     cluster_list = inicializarClusters(dados)
     
+    agruparObjetos(cluster_list, dados)
     print(cluster_list)
     # cluster_list[0]["objs"].append([dados[4][1], dados[4][2], dados[4][3]])
     
