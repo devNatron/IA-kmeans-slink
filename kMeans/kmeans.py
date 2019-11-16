@@ -13,9 +13,34 @@ def lerArquivo(nomeArquivo):
 
     return dados
 
+def inicializarClusters(dados):
+    cluster_list = []
+    valores = []
+    
+    for i in range(0, nClusters):       # inicializa uma lista de dicionarios
+        flag = 1
+
+        #sortea um valor diferente
+        while flag:
+            flag = 0
+            sort = randint(1, len(dados) - 1)
+            for valor in valores:
+                if(sort == valor):
+                    flag = 1
+                    break
+        valores.append(sort)
+
+        cluster_list.append({ 
+            "centroide": [dados[sort][1], dados[sort][2]],
+            "objs": []
+        })
+    
+    return cluster_list
+
 def agrupar(centroides, dados):
     for obj in dados:
         (centroides[0], obj)
+
 
 if __name__ == "__main__":
     nomeArquivo = input("Insira nome do arquivo: ")
@@ -25,17 +50,9 @@ if __name__ == "__main__":
     dados = lerArquivo(nomeArquivo)
     # print(dados)
 
-    cluster_list = []
-    for i in range(0, nClusters):       # inicializa uma lista de dicionarios 
-        cluster_list.append({ 
-            "centroide": [-1, -1, -1],
-            "objs": []
-        })
-
-    for k in cluster_list:      # escolhe N objetos aleatorios para serem centroides iniciais 
-        val = randint(1, len(dados))
-        k["centroide"] = [dados[val][1], dados[val][2], dados[val][3]]
-
+    cluster_list = inicializarClusters(dados)
+    
+    print(cluster_list)
     # cluster_list[0]["objs"].append([dados[4][1], dados[4][2], dados[4][3]])
     
     #centroides = agrupar(centroides, dados)
