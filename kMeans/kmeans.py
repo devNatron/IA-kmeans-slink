@@ -1,5 +1,8 @@
 from random import randint
 
+#variaveis globais
+QTD_DADOS = 0
+
 def abrirArquivo(nomeArquivo):
     arquivo = open("../datasets/" + nomeArquivo + ".txt", "r")
     return arquivo
@@ -8,8 +11,15 @@ def lerArquivo(nomeArquivo):
     arquivo = abrirArquivo(nomeArquivo)
     dados = []
     
+    labels = arquivo.readline().split()
+    global QTD_DADOS
+    QTD_DADOS = len(labels) - 1
+
     for linha in arquivo:
-        dados.append(linha.split())
+        obj = linha.split()
+        for i in range(1, QTD_DADOS+1):
+            obj[i] = float(obj[i])
+        dados.append(obj)
 
     return dados
 
@@ -20,38 +30,42 @@ def inicializarClusters(dados):
     for i in range(0, nClusters):       # inicializa uma lista de dicionarios
         flag = 1
 
+        cluster_list.append({ 
+            "centroide": [],
+            "objs": []
+        })
+
         #sortea um valor diferente
+        sort = 0
         while flag:
             flag = 0
-            sort = randint(1, len(dados) - 1)
+            sort = randint(0, len(dados) - 1)
             for valor in valores:
                 if(sort == valor):
                     flag = 1
                     break
         valores.append(sort)
 
-        cluster_list.append({ 
-            "centroide": [ float(dados[sort][1]), float(dados[sort][2]) ],
-            "objs": []
-        })
+        for j in range(0, QTD_DADOS):
+            cluster_list[i]["centroide"].append(dados[sort][j+1])
     
     return cluster_list
 
 def euclides(centroide, obj):
     distancia = 0
-    for i in range(0, 2):
-        distancia += pow( ( centroide["centroide"][i]) - float(obj[i+1]), 2)
+
+    #para cada dado calcula a distancia euclidiana e soma
+    for i in range(0, QTD_DADOS):
+        distancia += pow( ( centroide["centroide"][i]) - obj[i+1], 2)
 
     return distancia
 
-def agruparObjetos(cluster_list, dados):
-    teste = 1
+def agruparObjetos(cluster_list, dados, nClusters):
     for obj in dados:
-        menor_distancia = [0, 100000]
-        if(teste):
-            teste = 0
-            continue
-        for i in range(0, 3):
+        menor_distancia = [0, 100000] #menor_distancia[0] = index do cluster, menor_distancia[1] = distancia
+        
+        #calcula distancia para cada cluster e escolhe a menor
+        for i in range(0, nClusters):
             distancia = euclides(cluster_list[i], obj)
             if(distancia < menor_distancia[1]):
                 menor_distancia[1] = distancia
@@ -70,7 +84,9 @@ if __name__ == "__main__":
     #inicia clusters sorteando 3 obj aleatórios
     cluster_list = inicializarClusters(dados)
     
-    agruparObjetos(cluster_list, dados)
+    #agrupa os objetos aos clusters mais proximos
+    agruparObjetos(cluster_list, dados, nClusters)
+
     print(cluster_list)
     # cluster_list[0]["objs"].append([dados[4][1], dados[4][2], dados[4][3]])
     
