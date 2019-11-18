@@ -1,7 +1,7 @@
 from random import randint
 
 #variaveis globais
-QTD_DADOS = 0
+QTD_COLUNAS = 0
 
 def abrirArquivo(nomeArquivo):
     arquivo = open("../datasets/" + nomeArquivo + ".txt", "r")
@@ -12,12 +12,12 @@ def lerArquivo(nomeArquivo):
     dados = []
     
     labels = arquivo.readline().split()
-    global QTD_DADOS
-    QTD_DADOS = len(labels) - 1
+    global QTD_COLUNAS
+    QTD_COLUNAS = len(labels) - 1
 
     for linha in arquivo:
         obj = linha.split()
-        for i in range(1, QTD_DADOS+1):
+        for i in range(1, QTD_COLUNAS+1):
             obj[i] = float(obj[i])
         dados.append(obj)
 
@@ -46,8 +46,33 @@ def inicializarClusters(dados):
                     break
         valores.append(sort)
 
-        for j in range(0, QTD_DADOS):
+        for j in range(0, QTD_COLUNAS):
             cluster_list[i]["centroide"].append(dados[sort][j+1])
+    
+    return cluster_list
+
+def atualizarClusters(lista_antiga, nClusters):
+    cluster_list = []
+    valores = []
+    media = []
+    
+    for coluna in range(0, QTD_COLUNAS):
+        media.append(0)
+
+    for i in range(0, nClusters):
+        
+        cluster_list.append({ 
+            "centroide": [],
+            "objs": []
+        })
+        for obj in lista_antiga[i]["objs"]:  
+            for coluna in range(0, QTD_COLUNAS):
+                media[coluna] += obj[coluna + 1]
+        for coluna in range(0, QTD_COLUNAS):
+            cluster_list[i]["centroide"].append(media[coluna]/len(lista_antiga[i]["objs"]))
+
+        for coluna in range(0, QTD_COLUNAS):
+            media[coluna] = 0
     
     return cluster_list
 
@@ -55,8 +80,8 @@ def euclides(centroide, obj):
     distancia = 0
 
     #para cada dado calcula a distancia euclidiana e soma
-    for i in range(0, QTD_DADOS):
-        distancia += pow( ( centroide["centroide"][i]) - obj[i+1], 2)
+    for i in range(0, QTD_COLUNAS):
+        distancia += pow( ( centroide["centroide"][i]) - obj[i+1], 2) # +1 por causa da lbl
 
     return distancia
 
@@ -76,22 +101,29 @@ def agruparObjetos(cluster_list, dados, nClusters):
 if __name__ == "__main__":
     nomeArquivo = input("Insira nome do arquivo: ")
     nClusters = int(input("Quantidade de clusters: "))
-    #nInteracoes = input("quantidade de interacoes: ")
+    nInteracoes = int(input("Quantidade de interacoes: "))
 
     #leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
 
     #inicia clusters sorteando 3 obj aleatórios
     cluster_list = inicializarClusters(dados)
-    
-    #agrupa os objetos aos clusters mais proximos
     agruparObjetos(cluster_list, dados, nClusters)
 
+    print("primeiros valores -------------------------------------")
     print(cluster_list)
-    # cluster_list[0]["objs"].append([dados[4][1], dados[4][2], dados[4][3]])
     
-    #centroides = agrupar(centroides, dados)
+    for i in range(0, nInteracoes):
+        #agrupa os objetos aos clusters mais proximos
+        print("iteracao " + str(i) + "-------------------------------------")
+        print(cluster_list)
 
+        cluster_list = atualizarClusters(cluster_list, nClusters)
+        agruparObjetos(cluster_list, dados, nClusters)
+
+    print("terminou -------------------------------------")
+    print(cluster_list)
+    
 # 1.Escolher k centróides
 # 2.Associar cada objeto x ao cluster com o centróide mais próximo
 # 3.Recalcular os centróides
