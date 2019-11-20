@@ -1,4 +1,5 @@
 from random import randint
+from math import sqrt
 
 #variaveis globais
 QTD_COLUNAS = 0
@@ -53,7 +54,6 @@ def inicializarClusters(dados):
 
 def atualizarClusters(lista_antiga, nClusters):
     cluster_list = []
-    valores = []
     media = []
     
     for coluna in range(0, QTD_COLUNAS):
@@ -83,7 +83,7 @@ def euclides(centroide, obj):
     for i in range(0, QTD_COLUNAS):
         distancia += pow( ( centroide["centroide"][i]) - obj[i+1], 2) # +1 por causa da lbl
 
-    return distancia
+    return sqrt(distancia)
 
 def agruparObjetos(cluster_list, dados, nClusters):
     for obj in dados:
@@ -97,11 +97,15 @@ def agruparObjetos(cluster_list, dados, nClusters):
                 menor_distancia[0] = i
         cluster_list[ menor_distancia[0] ]["objs"].append(obj)
 
+def imprimirClusters(cluster_list, nClusters):
+    for i in range(0, nClusters):
+        for obj in cluster_list[i]["objs"]:
+            print(obj[0] + "\t" + str(i))
 
 if __name__ == "__main__":
-    nomeArquivo = input("Insira nome do arquivo: ")
-    nClusters = int(input("Quantidade de clusters: "))
-    nInteracoes = int(input("Quantidade de interacoes: "))
+    nomeArquivo = input()
+    nClusters = int(input())
+    nInteracoes = int(input())
 
     #leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
@@ -110,19 +114,13 @@ if __name__ == "__main__":
     cluster_list = inicializarClusters(dados)
     agruparObjetos(cluster_list, dados, nClusters)
 
-    print("primeiros valores -------------------------------------")
-    print(cluster_list)
-    
     for i in range(0, nInteracoes):
         #agrupa os objetos aos clusters mais proximos
-        print("iteracao " + str(i) + "-------------------------------------")
-        print(cluster_list)
 
         cluster_list = atualizarClusters(cluster_list, nClusters)
         agruparObjetos(cluster_list, dados, nClusters)
 
-    print("terminou -------------------------------------")
-    print(cluster_list)
+    imprimirClusters(cluster_list, nClusters)
     
 # 1.Escolher k centróides
 # 2.Associar cada objeto x ao cluster com o centróide mais próximo
