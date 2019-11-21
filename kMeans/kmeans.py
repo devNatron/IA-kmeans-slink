@@ -102,6 +102,39 @@ def imprimirClusters(cluster_list, nClusters):
         for obj in cluster_list[i]["objs"]:
             print(obj[0] + "\t" + str(i))
 
+def indiceRand(cluster_list, nClusters):
+    particao = []
+    partRef = []
+    cont = 0
+
+    for i in range(0, nClusters):
+        for obj in cluster_list[i]["objs"]:
+            particao.append([obj[0], i])
+    
+    nomePart = input()
+    arquivo = abrirArquivo(nomePart)
+
+    for linha in arquivo:
+        obj = linha.split()
+        obj[1] = int(obj[1])
+        partRef.append(obj)
+
+    for obj in particao:
+        for objRef in partRef:
+            if(obj[0] == objRef[0]):
+                obj.append(objRef[1])
+                #print(obj)
+
+    n = len(particao)
+    for i in range(0, n):
+        for j in range(i+1, n):
+            if(particao[i][1] == particao[j][1] and particao[i][2] == particao[j][2]):
+                cont = cont + 1
+            elif(particao[i][1] != particao[j][1] and particao[i][2] != particao[j][2]):
+                cont = cont + 1
+
+    return ( cont/ (n * n-1)/2 )
+
 if __name__ == "__main__":
     nomeArquivo = input()
     nClusters = int(input())
@@ -112,16 +145,24 @@ if __name__ == "__main__":
 
     #inicia clusters sorteando 3 obj aleatórios
     cluster_list = inicializarClusters(dados)
+    #agrupa os objs ao cluster mais proximo
     agruparObjetos(cluster_list, dados, nClusters)
 
     for i in range(0, nInteracoes):
-        #agrupa os objetos aos clusters mais proximos
-
+        #atualiza os clusters recalculando o centroide
         cluster_list = atualizarClusters(cluster_list, nClusters)
+        
+        #agrupa os objetos aos clusters mais proximos
         agruparObjetos(cluster_list, dados, nClusters)
 
-    imprimirClusters(cluster_list, nClusters)
+
+    #imprimirClusters(cluster_list, nClusters)
+
     
+    #print("\n-----------INDICE RAND-----------\n")
+    rand = indiceRand(cluster_list, nClusters)
+    print(rand)
+
 # 1.Escolher k centróides
 # 2.Associar cada objeto x ao cluster com o centróide mais próximo
 # 3.Recalcular os centróides
