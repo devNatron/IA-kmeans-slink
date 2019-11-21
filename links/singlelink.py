@@ -12,44 +12,76 @@ QTD_COLUNAS = 0
 
 def inicializarClusters(dados):
     cluster_list = []
-
+    #Inicializa uma lista de objetos, sendo cada um deles um cluster com seus respectivos dados
     for i in range(len(dados)):
-        cluster_list.append([])
+        cluster_list.append({
+            "Cluster": [],
+            "Distancias": []
+        })
+        #Salva os nomes de cada objeto em um cluster pra cada
+        cluster_list[i]["Cluster"].append(dados[i][0])
+
+        #Calcula as distancias euclidianas de cada objeto e salva no vetor de distancias
         for j in range(len(dados)):
-            cluster_list[i].append(distEuclidiana(dados[i], dados[j]))
+            cluster_list[i]["Distancias"].append(distEuclidiana(dados[i], dados[j]))
 
     return cluster_list
 
 
 def atualizaClusters(cluster_list):
-    menor = cluster_list[0][1]
-    cluster = []
+    menor = cluster_list[0]["Distancias"][1]
+    #Inicialização do novo cluster 
+    cluster = {
+        "Cluster": [],
+        "Distancias": []
+    }
+    #Variavel para salvar a posição dos dois clusters que serão agrupados
     pos = ({
         "x": 0,
         "y": 1
     })
+    #Calcula a menor distancia que não seja 0 para o agrupamento
     for i in range(len(cluster_list)):
-        for j in range(len(cluster_list[i])):
-            if(cluster_list[i][j] != 0 and cluster_list[i][j] < menor):
-                menor = cluster_list[i][j]
+        for j in range(len(cluster_list[i]["Distancias"])):
+            if(cluster_list[i]["Distancias"][j] != 0 and cluster_list[i]["Distancias"][j] < menor):
+                menor = cluster_list[i]["Distancias"][j]
                 pos["x"] = i
                 pos["y"] = j
-                
-    for i in range(len(cluster_list[pos["x"]])):
-        if(cluster_list[pos["x"]][i] != 0 and cluster_list[pos["y"]][i] != 0):
-            menorDist = min(cluster_list[pos["x"]][i], cluster_list[pos["y"]][i])
-            cluster.append(menorDist)
-    cluster.insert(0, 0.0)
-    del cluster_list[pos["x"]]
-    del cluster_list[pos["y"]-1]
 
+    #Salva as novas distâncias no novo cluster
+    for i in range(len(cluster_list[pos["x"]]["Distancias"])):
+        if(cluster_list[pos["x"]]["Distancias"][i] != 0 and cluster_list[pos["y"]]["Distancias"][i] != 0):
+            menorDist = min(cluster_list[pos["x"]]["Distancias"][i], cluster_list[pos["y"]]["Distancias"][i])
+            cluster["Distancias"].append(menorDist)
+    cluster["Distancias"].insert(0, 0.0)
+
+    #Salva os nomes presentes no novo cluster
+    for i in range(len(cluster_list[pos["x"]]["Cluster"])):
+        cluster["Cluster"].append(cluster_list[pos["x"]]["Cluster"][i])
+    for i in range(len(cluster_list[pos["y"]]["Cluster"])):
+        cluster["Cluster"].append(cluster_list[pos["y"]]["Cluster"][i])
+
+    #Deleta clusters que foram agrupados
+    if(pos["x"] < pos["y"]):
+        del cluster_list[pos["y"]]
+        del cluster_list[pos["x"]]
+    else:
+        del cluster_list[pos["x"]]
+        del cluster_list[pos["y"]]
+
+    #Deleta distancias dos clusters que agruparam de cada cluster
     for i in range(len(cluster_list)):
-        del cluster_list[i][pos["x"]]
-        del cluster_list[i][pos["y"]-1]
-
+        if(pos["x"] < pos["y"]):
+            del cluster_list[i]["Distancias"][pos["y"]]
+            del cluster_list[i]["Distancias"][pos["x"]]
+        else:
+            del cluster_list[i]["Distancias"][pos["x"]]
+            del cluster_list[i]["Distancias"][pos["y"]]
+            
+    #Insere o novo cluster na lista
     cluster_list.insert(0, cluster)
     for i in range(1, len(cluster_list)):
-        cluster_list[i].insert(0, cluster[i])
+        cluster_list[i]["Distancias"].insert(0, cluster["Distancias"][i])
     return cluster_list
 
 
@@ -58,10 +90,11 @@ def atualizaClusters(cluster_list):
 	Funcoes de agrupamento e distancia
 	----------------------------------
 '''
+
+
 def distEuclidiana(cluster1, cluster2):
     distancia = 0
-
-    # para cada dado calcula a distancia euclidiana e soma
+    #Calcula para cada dado a distancia euclidiana e soma
     for i in range(1, QTD_COLUNAS+1):
         distancia += pow((cluster1[i] - cluster2[i]), 2)
 
@@ -71,7 +104,6 @@ def distEuclidiana(cluster1, cluster2):
 '''
 	----------------------------------
 	Funcoes para trabalhar com arquivo
-	(Usando as que os cara criaram)
 	----------------------------------
 '''
 
@@ -104,25 +136,15 @@ if __name__ == "__main__":
 
     # leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
-    
+
     cluster_list = inicializarClusters(dados)
-
-    print("primeiros valores -------------------------------------")
     print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
-
     quantClusters = kmax
     while quantClusters > kmin:
         atualizaClusters(cluster_list)
         quantClusters = len(cluster_list)
         if(len(cluster_list) <= kmax):
-            #invés de printar é só jogar no arquivo
+            # invés de printar é só jogar no arquivo
             print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
-        
 
-'''
-	Algoritmo:
-	* Inicia com cada objeto em um cluster
-	* Enquanto há cluster para agrupar
-		- Calcula distância entre cada par de clusters
-		- Combina o par de clusters mais próximo
-'''
+
