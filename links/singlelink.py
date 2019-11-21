@@ -99,40 +99,25 @@ def lerArquivo(nomeArquivo):
 
 if __name__ == "__main__":
     nomeArquivo = input("Insira nome do arquivo: ")
-    #kmin = int(input("Insira o kmin: "))
-    #kmax = int(input("Insira o kmax: "))
+    kmin = int(input("Insira o kmin: "))
+    kmax = int(input("Insira o kmax: "))
 
     # leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
-
-    # inicia clusters com kmax particoes
+    
     cluster_list = inicializarClusters(dados)
 
     print("primeiros valores -------------------------------------")
     print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
 
-    # nao tenho certeza se vai ser len(cluster_list) mesmo
-    # a gente precisa pegar a quantidade de clusters que tem atualmente
-    quantClusters = 10000
-    while quantClusters > 1:
+    quantClusters = kmax
+    while quantClusters > kmin:
         atualizaClusters(cluster_list)
         quantClusters = len(cluster_list)
-        print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
+        if(len(cluster_list) <= kmax):
+            #invés de printar é só jogar no arquivo
+            print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
         
-    # gerar os kmin arquivos
-
-
-'''   
-	Talvez dê para reaproveitar?
-
-    for i in range(0, nInteracoes):
-        #agrupa os objetos aos clusters mais proximos
-        print("iteracao " + str(i) + "-------------------------------------")
-        print(cluster_list)
-
-        cluster_list = atualizarClusters(cluster_list, nClusters)
-        agruparObjetos(cluster_list, dados, nClusters)
-'''
 
 '''
 	Algoritmo:
