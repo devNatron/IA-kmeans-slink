@@ -1,60 +1,75 @@
-#variaveis globais
+from math import sqrt
+from scipy.cluster.hierarchy import linkage
+from scipy.cluster.hierarchy import fcluster
+from scipy.cluster.hierarchy import dendrogram
+#from matplotlib import pyplot
+
+# variaveis globais
 QTD_COLUNAS = 0
 
 '''
 	---------------------------------------
 	Inicializacao e atualizacao de clusters
 	---------------------------------------
-''' 
+'''
+
 
 def inicializarClusters(dados):
     cluster_list = []
-    valores = []
 
-    for i in range(0, nClusters):       # inicializa uma lista de dicionarios
-        flag = 1
+    for i in range(len(dados)):
+        cluster_list.append([])
+        for j in range(len(dados)):
+            cluster_list[i].append(distEuclidiana(dados[i], dados[j]))
 
-        cluster_list.append({ 
-            "centroide": [],
-            "objs": []
-        })
-
-        #sortea um valor diferente
-        sort = 0
-        while flag:
-            flag = 0
-            sort = randint(0, len(dados) - 1)
-            for valor in valores:
-                if(sort == valor):
-                    flag = 1
-                    break
-        valores.append(sort)
-
-        for j in range(0, QTD_COLUNAS):
-            cluster_list[i]["centroide"].append(dados[sort][j+1])
-    
     return cluster_list
-    
-def atualizaClusters():
-	
-	
-	return cluster_list   
-    
-    
+
+
+def atualizaClusters(cluster_list):
+    menor = cluster_list[0][1]
+    cluster = []
+    pos = ({
+        "x": 0,
+        "y": 1
+    })
+    for i in range(len(cluster_list)):
+        for j in range(len(cluster_list[i])):
+            if(cluster_list[i][j] != 0 and cluster_list[i][j] < menor):
+                menor = cluster_list[i][j]
+                pos["x"] = i
+                pos["y"] = j
+                
+    for i in range(len(cluster_list[pos["x"]])):
+        if(cluster_list[pos["x"]][i] != 0 and cluster_list[pos["y"]][i] != 0):
+            menorDist = min(cluster_list[pos["x"]][i], cluster_list[pos["y"]][i])
+            cluster.append(menorDist)
+    cluster.insert(0, 0.0)
+    del cluster_list[pos["x"]]
+    del cluster_list[pos["y"]-1]
+
+    for i in range(len(cluster_list)):
+        del cluster_list[i][pos["x"]]
+        del cluster_list[i][pos["y"]-1]
+
+    cluster_list.insert(0, cluster)
+    for i in range(1, len(cluster_list)):
+        cluster_list[i].insert(0, cluster[i])
+    return cluster_list
+
+
 '''
 	----------------------------------
 	Funcoes de agrupamento e distancia
 	----------------------------------
-'''    
- 
-def singleLink(cluster1, cluster2):
-	
-	return distancia
-
+'''
 def distEuclidiana(cluster1, cluster2):
-	
-	
-	return dist
+    distancia = 0
+
+    # para cada dado calcula a distancia euclidiana e soma
+    for i in range(1, QTD_COLUNAS+1):
+        distancia += pow((cluster1[i] - cluster2[i]), 2)
+
+    return sqrt(distancia)
 
 
 '''
@@ -64,14 +79,16 @@ def distEuclidiana(cluster1, cluster2):
 	----------------------------------
 '''
 
+
 def abrirArquivo(nomeArquivo):
     arquivo = open("../datasets/" + nomeArquivo + ".txt", "r")
     return arquivo
 
-def lerArquivo(nomeArquivo): 
+
+def lerArquivo(nomeArquivo):
     arquivo = abrirArquivo(nomeArquivo)
     dados = []
-    
+
     labels = arquivo.readline().split()
     global QTD_COLUNAS
     QTD_COLUNAS = len(labels) - 1
@@ -80,40 +97,42 @@ def lerArquivo(nomeArquivo):
         obj = linha.split()
         for i in range(1, QTD_COLUNAS+1):
             obj[i] = float(obj[i])
+        # for i in range(0, QTD_COLUNAS):
+        #    obj[i] = obj[i+1]
+        #obj[i+1] = False
         dados.append(obj)
-
     return dados
 
 
 if __name__ == "__main__":
     nomeArquivo = input("Insira nome do arquivo: ")
-    kmin = int(input("Insira o kmin: "))
-    kmax = int(input("Insira o kmax: "))
+    #kmin = int(input("Insira o kmin: "))
+    #kmax = int(input("Insira o kmax: "))
 
-    #leitura dos dados do arquivo
+    # leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
+    #h = linkage(dados, method='single', metric='euclidean')
+    # dendrogram(h)
+    # pyplot.show()
 
-    #inicia clusters com kmax particoes
-    cluster_list = inicializarClusters(dados, kmax)
-    
+    # inicia clusters com kmax particoes
+    cluster_list = inicializarClusters(dados)
+
     print("primeiros valores -------------------------------------")
-    print(cluster_list)
-    
-	#nao tenho certeza se vai ser len(cluster_list) mesmo
-	#a gente precisa pegar a quantidade de clusters que tem atualmente
-    quantClusters = len(cluster_list)
-    
-    while quantClusters > kmin:
-		
-		
-		
-		quantClusters = len(cluster_list)
+    print(len(cluster_list), ' Clusters: ', cluster_list)
 
-	#gerar os kmin arquivos
-    print("terminou -------------------------------------")
-    print(cluster_list)
-    
-    
+    # nao tenho certeza se vai ser len(cluster_list) mesmo
+    # a gente precisa pegar a quantidade de clusters que tem atualmente
+    quantClusters = 10000
+    while quantClusters > 1:
+        atualizaClusters(cluster_list)
+        quantClusters = len(cluster_list)
+
+    # gerar os kmin arquivos
+    #print("terminou -------------------------------------")
+    # print(cluster_list)
+
+
 '''   
 	Talvez dê para reaproveitar?
 
