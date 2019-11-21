@@ -1,8 +1,4 @@
 from math import sqrt
-from scipy.cluster.hierarchy import linkage
-from scipy.cluster.hierarchy import fcluster
-from scipy.cluster.hierarchy import dendrogram
-#from matplotlib import pyplot
 
 # variaveis globais
 QTD_COLUNAS = 0
@@ -97,9 +93,6 @@ def lerArquivo(nomeArquivo):
         obj = linha.split()
         for i in range(1, QTD_COLUNAS+1):
             obj[i] = float(obj[i])
-        # for i in range(0, QTD_COLUNAS):
-        #    obj[i] = obj[i+1]
-        #obj[i+1] = False
         dados.append(obj)
     return dados
 
@@ -111,15 +104,12 @@ if __name__ == "__main__":
 
     # leitura dos dados do arquivo
     dados = lerArquivo(nomeArquivo)
-    #h = linkage(dados, method='single', metric='euclidean')
-    # dendrogram(h)
-    # pyplot.show()
 
     # inicia clusters com kmax particoes
     cluster_list = inicializarClusters(dados)
 
     print("primeiros valores -------------------------------------")
-    print(len(cluster_list), ' Clusters: ', cluster_list)
+    print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
 
     # nao tenho certeza se vai ser len(cluster_list) mesmo
     # a gente precisa pegar a quantidade de clusters que tem atualmente
@@ -127,10 +117,9 @@ if __name__ == "__main__":
     while quantClusters > 1:
         atualizaClusters(cluster_list)
         quantClusters = len(cluster_list)
-
+        print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
+        
     # gerar os kmin arquivos
-    #print("terminou -------------------------------------")
-    # print(cluster_list)
 
 
 '''   
