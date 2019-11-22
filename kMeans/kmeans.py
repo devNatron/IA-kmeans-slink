@@ -1,5 +1,6 @@
 from random import randint
 from math import sqrt
+import indiceRand
 
 #variaveis globais
 QTD_COLUNAS = 0
@@ -22,6 +23,7 @@ def lerArquivo(nomeArquivo):
             obj[i] = float(obj[i])
         dados.append(obj)
 
+    arquivo.close()
     return dados
 
 def inicializarClusters(dados):
@@ -46,10 +48,10 @@ def inicializarClusters(dados):
                     flag = 1
                     break
         valores.append(sort)
-
+        
         for j in range(0, QTD_COLUNAS):
             cluster_list[i]["centroide"].append(dados[sort][j+1])
-    
+    # print(cluster_list)
     return cluster_list
 
 def atualizarClusters(lista_antiga, nClusters):
@@ -97,43 +99,12 @@ def agruparObjetos(cluster_list, dados, nClusters):
                 menor_distancia[0] = i
         cluster_list[ menor_distancia[0] ]["objs"].append(obj)
 
-def imprimirClusters(cluster_list, nClusters):
+def imprimirClusters(cluster_list, nClusters, nomeArquivo):
+    arquivo = open("./" + nomeArquivo + "Saida_" + str(nClusters) + "C.clu", "w")
     for i in range(0, nClusters):
         for obj in cluster_list[i]["objs"]:
-            print(obj[0] + "\t" + str(i))
-
-def indiceRand(cluster_list, nClusters):
-    particao = []
-    partRef = []
-    cont = 0
-
-    for i in range(0, nClusters):
-        for obj in cluster_list[i]["objs"]:
-            particao.append([obj[0], i])
-    
-    nomePart = input()
-    arquivo = abrirArquivo(nomePart)
-
-    for linha in arquivo:
-        obj = linha.split()
-        obj[1] = int(obj[1])
-        partRef.append(obj)
-
-    for obj in particao:
-        for objRef in partRef:
-            if(obj[0] == objRef[0]):
-                obj.append(objRef[1])
-                #print(obj)
-
-    n = len(particao)
-    for i in range(0, n):
-        for j in range(i+1, n):
-            if(particao[i][1] == particao[j][1] and particao[i][2] == particao[j][2]):
-                cont = cont + 1
-            elif(particao[i][1] != particao[j][1] and particao[i][2] != particao[j][2]):
-                cont = cont + 1
-
-    return ( cont/ (n * n-1)/2 )
+            arquivo.write(obj[0] + "\t" + str(i) + "\n")
+    arquivo.close()
 
 if __name__ == "__main__":
     nomeArquivo = input()
@@ -156,11 +127,11 @@ if __name__ == "__main__":
         agruparObjetos(cluster_list, dados, nClusters)
 
 
-    #imprimirClusters(cluster_list, nClusters)
+    imprimirClusters(cluster_list, nClusters, nomeArquivo)
 
     
     #print("\n-----------INDICE RAND-----------\n")
-    rand = indiceRand(cluster_list, nClusters)
+    rand = indiceRand.calcularIndice(cluster_list, nClusters)
     print(rand)
 
 # 1.Escolher k centróides
