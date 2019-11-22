@@ -128,7 +128,13 @@ def lerArquivo(nomeArquivo):
         dados.append(obj)
     return dados
 
-
+def imprimirClusters(cluster_list, nClusters, nomeArquivo):
+    arquivo = open("./" + nomeArquivo + "Saida_" + str(nClusters) + "C.clu", "w")
+    arquivo.write("Particao: \n")
+    for i in range(0, len(cluster_list)):
+        arquivo.write("Cluster " + str(i) + ": " + str(cluster_list[i]["Cluster"]) + "\nDistancias: " +  str(cluster_list[i]["Distancias"]) + "\n")
+    arquivo.close()
+    
 if __name__ == "__main__":
     nomeArquivo = input("Insira nome do arquivo: ")
     kmin = int(input("Insira o kmin: "))
@@ -138,13 +144,11 @@ if __name__ == "__main__":
     dados = lerArquivo(nomeArquivo)
 
     cluster_list = inicializarClusters(dados)
-    print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
     quantClusters = kmax
     while quantClusters > kmin:
         atualizaClusters(cluster_list)
         quantClusters = len(cluster_list)
         if(len(cluster_list) <= kmax):
-            # invés de printar é só jogar no arquivo
-            print(len(cluster_list), ' Clusters: ', cluster_list, '\n\n')
+            imprimirClusters(cluster_list, quantClusters, nomeArquivo)
 
 

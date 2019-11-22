@@ -1,0 +1,5 @@
+Particao: 
+Cluster 0: ['Bart', 'Lisa', 'Maggie']
+Distancias: [0.0, 65.11528238439882]
+Cluster 1: ['Marge', 'Selma', 'Otto', 'Krusty', 'Abe', 'Homer']
+Distancias: [65.11528238439882, 0.0]

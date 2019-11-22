@@ -1,0 +1,7 @@
+Particao: 
+Cluster 0: ['Marge', 'Selma', 'Otto', 'Krusty', 'Abe', 'Homer']
+Distancias: [0.0, 65.11528238439882, 134.25721582097552]
+Cluster 1: ['Bart', 'Lisa']
+Distancias: [65.11528238439882, 0.0, 58.45511098270193]
+Cluster 2: ['Maggie']
+Distancias: [134.25721582097552, 58.45511098270193, 0.0]
