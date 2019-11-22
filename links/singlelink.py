@@ -129,10 +129,10 @@ def lerArquivo(nomeArquivo):
     return dados
 
 def imprimirClusters(cluster_list, nClusters, nomeArquivo):
-    arquivo = open("./" + nomeArquivo + "Saida_" + str(nClusters) + "C.clu", "w")
+    arquivo = open("./" + nomeArquivo + "SaidaSingleLink_" + str(nClusters) + "C.clu", "w")
     arquivo.write("Particao: \n")
     for i in range(0, len(cluster_list)):
-        arquivo.write("Cluster " + str(i) + ": " + str(cluster_list[i]["Cluster"]) + "\nDistancias: " +  str(cluster_list[i]["Distancias"]) + "\n")
+        arquivo.write("Cluster " + str(i+1) + ": " + str(cluster_list[i]["Cluster"]) + "\nDistancias: " +  str(cluster_list[i]["Distancias"]) + "\n")
     arquivo.close()
     
 if __name__ == "__main__":
