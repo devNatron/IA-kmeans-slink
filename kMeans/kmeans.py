@@ -1,6 +1,5 @@
 from random import randint
 from math import sqrt
-import indiceRand
 
 #variaveis globais
 QTD_COLUNAS = 0
@@ -25,6 +24,45 @@ def lerArquivo(nomeArquivo):
 
     arquivo.close()
     return dados
+
+def indiceRand(cluster_list, nClusters):
+    particao = []
+    partRef = []
+    a = b = c = d = 0
+
+    for i in range(0, nClusters):
+        for obj in cluster_list[i]["objs"]:
+            particao.append([obj[0], i])
+    
+    nomePart = input()
+    arquivo = abrirArquivo(nomePart)
+
+    for linha in arquivo:
+        obj = linha.split()
+        obj[1] = int(obj[1])
+        partRef.append(obj)
+
+    for obj in particao:
+        for objRef in partRef:
+            if(obj[0] == objRef[0]):
+                obj.append(objRef[1])
+                # print(obj)
+
+    n = len(particao)
+    for i in range(0, n):
+        for j in range(i+1, n):
+            if(particao[i][1] == particao[j][1] and particao[i][2] == particao[j][2]):
+                a = a + 1
+            elif(particao[i][1] != particao[j][1] and particao[i][2] != particao[j][2]):
+                b = b + 1
+            elif(particao[i][1] == particao[j][1] and particao[i][2] != particao[j][2]):
+                c = c + 1
+            else:
+                d = d + 1
+
+    m = a + b + c + d
+    temp = (a + c)*(a + b)
+    return ( (a - temp/m) / ((a + c + a + b)/2 - temp/m) )
 
 def inicializarClusters(dados):
     cluster_list = []
@@ -100,7 +138,7 @@ def agruparObjetos(cluster_list, dados, nClusters):
         cluster_list[ menor_distancia[0] ]["objs"].append(obj)
 
 def imprimirClusters(cluster_list, nClusters, nomeArquivo):
-    arquivo = open("./" + nomeArquivo + "Saida_" + str(nClusters) + "C.clu", "w")
+    arquivo = open("./" + nomeArquivo + "SaidaKmean_" + str(nClusters) + "C.clu", "w")
     for i in range(0, nClusters):
         for obj in cluster_list[i]["objs"]:
             arquivo.write(obj[0] + "\t" + str(i) + "\n")
@@ -131,7 +169,7 @@ if __name__ == "__main__":
 
     
     #print("\n-----------INDICE RAND-----------\n")
-    rand = indiceRand.calcularIndice(cluster_list, nClusters)
+    rand = indiceRand(cluster_list, nClusters)
     print(rand)
 
 # 1.Escolher k centróides
