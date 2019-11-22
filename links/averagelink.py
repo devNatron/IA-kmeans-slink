@@ -129,12 +129,11 @@ def lerArquivo(nomeArquivo):
     return dados
 
 def imprimirClusters(cluster_list, nClusters, nomeArquivo):
-    arquivo=open("./" + nomeArquivo + "SaidaAverageLink_" + \
-                 str(nClusters) + "C.clu", "w")
-    arquivo.write("Particao: \n")
+    arquivo=open("./rand/" + nomeArquivo + "SaidaAverageLinkParaRand_" + str(nClusters) + "C.clu", "w")
     for i in range(0, len(cluster_list)):
-        arquivo.write("Cluster " + str(i+1) + ": " + str(
-            cluster_list[i]["Cluster"]) + "\nDistancias: " + str(cluster_list[i]["Distancias"]) + "\n")
+        cluster_list[i]["Cluster"] = sorted(cluster_list[i]["Cluster"])
+        for j in range(0, len(cluster_list[i]["Cluster"])):
+            arquivo.write(str(cluster_list[i]["Cluster"][j]) + "\t" + str(i) + "\n")
     arquivo.close()
 
 if __name__ == "__main__":
