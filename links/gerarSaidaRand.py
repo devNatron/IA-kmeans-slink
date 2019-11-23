@@ -1,6 +1,6 @@
 import numpy as np
 def abrirArquivo():
-    arquivo = open("./rand/monkeySaidaAverageLink_12C.clu", "r")
+    arquivo = open("./rand/monkeySaidaSingleLink_11C.clu", "r")
     return arquivo
 
 
@@ -10,7 +10,7 @@ def lerArquivo():
     dados = []
     labels = arquivo.readlines()
 
-    arquivo = open("./rand/monkeySaidaAverageLinkParaRand_12C.clu", "w")
+    arquivo = open("./rand/monkeySaidaSingleLinkParaRand_11C.clu", "w")
     for i in range(len(labels)):
         dados.append([])
         dados[i].append(sorted(labels[i].split()))
