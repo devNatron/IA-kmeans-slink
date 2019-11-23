@@ -5,7 +5,7 @@ from math import sqrt
 QTD_COLUNAS = 0
 
 def abrirArquivo(nomeArquivo):
-    arquivo = open("../datasets/" + nomeArquivo + ".txt", "r")
+    arquivo = open("../datasets/" + nomeArquivo, "r")
     return arquivo
 
 def lerArquivo(nomeArquivo): 
@@ -24,45 +24,6 @@ def lerArquivo(nomeArquivo):
 
     arquivo.close()
     return dados
-
-def indiceRand(cluster_list, nClusters):
-    particao = []
-    partRef = []
-    a = b = c = d = 0
-
-    for i in range(0, nClusters):
-        for obj in cluster_list[i]["objs"]:
-            particao.append([obj[0], i])
-    
-    nomePart = input()
-    arquivo = abrirArquivo(nomePart)
-
-    for linha in arquivo:
-        obj = linha.split()
-        obj[1] = int(obj[1])
-        partRef.append(obj)
-
-    for obj in particao:
-        for objRef in partRef:
-            if(obj[0] == objRef[0]):
-                obj.append(objRef[1])
-                # print(obj)
-
-    n = len(particao)
-    for i in range(0, n):
-        for j in range(i+1, n):
-            if(particao[i][1] == particao[j][1] and particao[i][2] == particao[j][2]):
-                a = a + 1
-            elif(particao[i][1] != particao[j][1] and particao[i][2] != particao[j][2]):
-                b = b + 1
-            elif(particao[i][1] == particao[j][1] and particao[i][2] != particao[j][2]):
-                c = c + 1
-            else:
-                d = d + 1
-
-    m = a + b + c + d
-    temp = (a + c)*(a + b)
-    return ( (a - temp/m) / ((a + c + a + b)/2 - temp/m) )
 
 def inicializarClusters(dados):
     cluster_list = []
@@ -167,10 +128,6 @@ if __name__ == "__main__":
 
     imprimirClusters(cluster_list, nClusters, nomeArquivo)
 
-    
-    #print("\n-----------INDICE RAND-----------\n")
-    rand = indiceRand(cluster_list, nClusters)
-    print(rand)
 
 # 1.Escolher k centróides
 # 2.Associar cada objeto x ao cluster com o centróide mais próximo
