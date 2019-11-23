@@ -22,7 +22,7 @@ def indiceRand(arquivo, arquivoRef):
         for objRef in partRef:
             if(obj[0] == objRef[0]):
                 obj.append(objRef[1])
-                break
+                # print(obj)
 
     n = len(particao)
     for i in range(0, n):
